@@ -17,6 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,39 +27,29 @@ import java.util.stream.Collectors;
 
 public class Main {
 
+    static String path = "D:\\BaiduYun\\test\\";
+
     public static void main(String[] args) throws IOException {
-
-        /*URL realUrl = new URL ("https://hls.blinkist.io/bibs/5d72602c6cee07000897c414/5d7260576cee07000897c415-T1567777138.m4a?Expires=1570094305&Signature=XhwdwQqROEXCvMm~6Bt01tHX18YSMQkou1VmfPZjAdrcVJBpJ~yQSmlyiesSnfBN72MajxQFNU~QjJfJ2nfmSzkMgYpD~6eyu7GN3QCnUh67~988r30j8fup0qN-XLOjgP7xD5YMLMfgcVfhh4g2SIM-FT-G1D-RMvO3F4YnofQ0CoKBDSyt7rqa930bEi7IBqosA7~FzWDap0CbK15x6wxmA32nlNPi2Dd8Ceh0Bx0P18qtiQqYGoOX2zrBqwn9QdvOarLDaQ3mNnSWQH1uVo138GBGacIyTuzAawyqL3y0JsIKwU4tgwsIb5WVUypfcsqkTKtXeK01wO5LcSir5Q__&Key-Pair-Id=APKAJXJM6BB7FFZXUB4A");
-        String fileName = "1_" + FilenameUtils.getName(realUrl.getPath());
-
-        FileUtils.copyURLToFile(
-                realUrl,
-                new File("C:\\test\\"+fileName),
-                1000, 1000);*/
 
         String url = "https://www.blinkist.com/en/nc/daily/";
         String urlAPI = "https://api.blinkist.com/v4/books/";
 
-        //https://www.blinkist.com/en/nc/daily/reader/a-walk-in-the-woods-en
 
-
-
-        //Document todayBook = Jsoup.parse(Constants.html2);
         Document todayBook = Jsoup.connect(url).get();
 
-        String coverUrl = todayBook.getElementsByClass("daily-book__image")
+        String coverUrl = todayBook.getElementsByClass("book-cover__image")
                 .first()
                 .attributes()
                 .asList()
                 .stream()
                 .filter(value -> value.getValue().contains("640.jpg"))
-                .map(attribute -> attribute.getValue().substring(0, attribute.getValue().length()-3))
+                .map(attribute -> attribute.getValue().substring(0, attribute.getValue().length() - 3))
                 .collect(Collectors.joining(""));
 
         //String picUrl = "https://images.blinkist.com/images/books/5d72602c6cee07000897c414/3_4/640.jpg 2x";
 
         String bookId = coverUrl.split("/")[5];
-        //String bookId = "5d6d558a6cee0700081a69d7";
+        //String bookId = "5d7609616cee07000897c50e";
         String chapterId = "";
 
         CloseableHttpClient client = HttpClients.createDefault();
@@ -78,7 +71,7 @@ public class Main {
         //String coverUrl = "https://images.blinkist.com/images/books/5d6d558a6cee0700081a69d7/3_4/640.jpg";
 
         String title = jsonResult.getString("title");
-        LocalDate publishDate = LocalDate.parse(jsonResult.getString("published_at").substring(0,10));
+        LocalDate publishDate = LocalDate.parse(jsonResult.getString("published_at").substring(0, 10));
         String subtitle = jsonResult.getString("subtitle");
         String author = jsonResult.getString("author");
         String aboutTheBook = jsonResult.getString("about_the_book");
@@ -89,7 +82,7 @@ public class Main {
         Book book = new Book(bookId, coverUrl, title, subtitle, author, aboutTheAuthor, publishDate, aboutTheBook, readers, chapters);
 
         if (jsonChapters != null) {
-            for (int i = 0 ; i < jsonChapters.length() ; i++) {
+            for (int i = 0; i < jsonChapters.length(); i++) {
                 JSONObject jsonObject = jsonChapters.getJSONObject(i);
                 chapterId = jsonObject.getString("id");
                 int orderNo = jsonObject.getInt("order_no");
@@ -108,141 +101,55 @@ public class Main {
             }
         }
 
-        chapters.forEach(System.out::println);
+        String subFolder = title.replace(" ", "_");
+        String folder = path + subFolder;
 
-        for (int i = 0; i < chapters.size(); i++) {
-            getAudioFile(chapters.get(i).getAudioUrl(), i+1);
+        if (createFolder(folder)) {
+            File file = new File(folder + "\\" + subFolder + ".html");
+            chapters.forEach(chapter -> {
+                try {
+                    FileUtils.writeStringToFile(file, chapter.toString(), "UTF8", true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            //chapters.forEach(Chapter::toString);
+
         }
 
-        //getAudioFile();
 
-        /*for (int i = 1; i <= chapters.size(); i++) {
-
-            URL realUrl = new URL (chapters.get(i).getAudioUrl());
-            String fileName = i + "_" + FilenameUtils.getName(realUrl.getPath());
-
-            FileUtils.copyURLToFile(
-                    realUrl,
-                    new File("C:\\test\\"+fileName),
-                    1000, 1000);
-        }*/
-
-
-
-
-        //Document blink = Jsoup.connect(link).get();
-
-        Document document3 = Jsoup.parse(Constants.book);
-
-        //String bookId = document3.getElementsByAttribute("data-book-id").attr("data-book-id");
-        System.out.println(bookId);
-
-
-        //Elements chapters = document3.getElementsByClass("chapter chapter");
-
-        List<String> bookByChapters = new ArrayList<>();
-
-/*        for (Element element:chapters) {
-            chapterId = element.attr("data-chapterid");
-            System.out.println(chapterId);
-        }*/
-
-
-
-        //String url = "https://www.blinkist.com/en/nc/daily/";
-        //String url = "https://www.blinkist.com/en/nc/daily/reader/happy-en";
-
-        /*Connection connect = HttpConnection.connect(url);
-        Connection.Response execute = connect.execute();
-        Connection.Response response = connect.response();
-        String body = response.body();*/
-
-        //Document document = Jsoup.connect(url).get();
-        Document document = Jsoup.parse(Constants.html);
-
-        Node title1 = document.getElementsByClass("daily-book__headline")
-                .first()
-                .childNodes()
-                .get(0);
-
-        Node author1 = document
-                .getElementsByClass("daily-book__author")
-                .first()
-                .childNodes()
-                .get(0);
-
-        String link = document.getElementsByClass("cta cta--play daily-book__cta")
-                .first()
-                .attributes()
-                .asList()
-                .get(1)
-                .getValue();
-
-        link = url + link.substring(13);
-
-
-
-        Document document2 = null;
-
-        String synopsis = document2.getElementsByClass("book-tabs__content-inner")
-                .first()
-                .childNodes()
-                .stream()
-                .filter(s -> s.toString().length() > 0)
-                .map(Node::toString)
-                .collect(Collectors.joining(""));
-
-        String audience = document2.getElementsByClass("book-tabs__content-inner")
-                .get(1)
-                .childNodes()
-                .stream()
-                .filter(s -> s.toString().length() > 0)
-                .map(Node::toString)
-                .collect(Collectors.joining(""));
-
-        String authorDetails = document2.getElementsByClass("book-tabs__content-inner")
-                .get(2)
-                .childNodes()
-                .stream()
-                .filter(s -> s.toString().length() > 0)
-                .map(Node::toString)
-                .collect(Collectors.joining(""));
-
-
-
-
-
-/*        for (Element element:chapters) {
-            String content = element.getElementsByClass("chapter__content")
-                    .first()
-                    .childNodes()
-                    .stream()
-                    .map(Node::toString)
-                    .collect(Collectors.joining(""));
-            bookByChapters.add(content);
-        }*/
-
-
-
-        //chapter__content
-
-
-        System.out.println(synopsis);
-        System.out.println(audience);
-        System.out.println(authorDetails);
-        System.out.println(coverUrl);
+        for (int i = 0; i < chapters.size(); i++) {
+            copyAudioFile(chapters.get(i).getAudioUrl(), i + 1, subFolder);
+        }
 
 
     }
 
-    private static void getAudioFile(String url, int orderNo) throws IOException {
+    private static boolean createFolder(String folderName) {
+        boolean result = true;
+        Path folder = Paths.get(folderName);
+        //if directory exists?
+        if (!Files.exists(folder)) {
+            try {
+                Files.createDirectories(folder);
+                result = true;
+            } catch (IOException e) {
+                //fail to create directory
+                e.printStackTrace();
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    private static void copyAudioFile(String url, int orderNo, String subFolder) throws IOException {
         //URL realUrl = new URL ("https://hls.blinkist.io/bibs/5d72602c6cee07000897c414/5d7260576cee07000897c415-T1567777138.m4a?Expires=1570094305&Signature=XhwdwQqROEXCvMm~6Bt01tHX18YSMQkou1VmfPZjAdrcVJBpJ~yQSmlyiesSnfBN72MajxQFNU~QjJfJ2nfmSzkMgYpD~6eyu7GN3QCnUh67~988r30j8fup0qN-XLOjgP7xD5YMLMfgcVfhh4g2SIM-FT-G1D-RMvO3F4YnofQ0CoKBDSyt7rqa930bEi7IBqosA7~FzWDap0CbK15x6wxmA32nlNPi2Dd8Ceh0Bx0P18qtiQqYGoOX2zrBqwn9QdvOarLDaQ3mNnSWQH1uVo138GBGacIyTuzAawyqL3y0JsIKwU4tgwsIb5WVUypfcsqkTKtXeK01wO5LcSir5Q__&Key-Pair-Id=APKAJXJM6BB7FFZXUB4A");
-        URL realUrl = new URL (url);
-        String fileName =  orderNo + "_" + FilenameUtils.getName(realUrl.getPath());
+        URL realUrl = new URL(url);
+        String fileName = orderNo + "_" + FilenameUtils.getName(realUrl.getPath());
 
         FileUtils.copyURLToFile(
                 realUrl,
-                new File("C:\\test\\"+fileName),
+                new File(path + subFolder + "\\" + fileName),
                 10000, 100000);
     }
 
