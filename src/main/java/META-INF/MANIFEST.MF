@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+mvc.Main-Class: mvc.Main
+

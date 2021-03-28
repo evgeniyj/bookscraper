@@ -1,0 +1,106 @@
+.books_main {
+    margin-left: auto;
+    margin-right: auto;
+    width: 0;
+}
+
+.book_main {
+    margin-left: auto;
+    margin-right: auto;
+    width: 825px;
+}
+
+.audio_pannel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chapter_content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 825px;
+    border-top: 1px solid #BAC8CE;
+    border-bottom: 1px solid #BAC8CE;
+    padding-bottom: 2em;
+    padding-top: 2em
+}
+
+.chapter_title {
+    margin-left: auto;
+    margin-right: auto;
+    width: 825px;
+}
+
+.reader_container_buttons {
+    width: 825px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 11em
+}
+
+
+.reader_container_app {
+    clear: both;
+    padding-left: 7.5rem
+}
+
+
+.reader_container_navigation_control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.reader_prev-icon {
+    font-family: "CeraPRO", serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #2CE080;
+    display: flex;
+    align-items: center
+}
+
+.reader_prev-icon:hover:before {
+    border-color: #20BA68
+}
+
+.reader_prev-icon:before {
+    display: inline-block;
+    border: solid #2CE080;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    margin-right: 1rem;
+    transform: rotate(135deg);
+    content: ""
+}
+
+.reader_container_navigation_control_next_button {
+    margin-left: auto
+}
+
+.reader_next-icon {
+    font-family: "CeraPRO", serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #2CE080;
+    display: flex;
+    align-items: center
+}
+
+.reader_next-icon:hover:after {
+    border-color: #20BA68
+}
+
+.reader_next-icon:after {
+    display: inline-block;
+    border: solid #2CE080;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    margin-left: 1rem;
+    transform: rotate(-45deg);
+    content: ""
+}
+

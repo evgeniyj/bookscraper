@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans.xsd
+    	http://www.springframework.org/schema/context
+    	http://www.springframework.org/schema/context/spring-context.xsd
+    	http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!-- serve static resources (*.html, ...) from /media/files -->
+    <mvc:default-servlet-handler/>
+
+    <!--  all resources inside folder src/main/webapp/resources are mapped so they can be referred to inside JSP files -->
+    <!--<mvc:resources mapping="/audio/**" location="file:d://BaiduYun/test/"/>-->
+
+    <mvc:resources mapping="/resources/**" location="/resources/, file:/media/files/"
+                   cache-period="31556926"/>
+
+    <!-- Add support for component scanning -->
+    <!-- Scans the classpath for annotated components that will be auto-registered as Spring beans -->
+
+    <context:component-scan base-package="mvc.model"/>
+
+    <context:component-scan base-package="mvc.service"/>
+
+    <context:component-scan base-package="mvc.repository"/>
+
+    <context:component-scan base-package="mvc.web"/>
+
+    <!-- Add support for conversion, formatting and validation support -->
+    <mvc:annotation-driven/>
+
+    <!-- Add support for scheduled tasks -->
+    <task:annotation-driven/>
+
+    <!-- Add support for transactions -->
+    <tx:annotation-driven/>
+
+    <!-- Define Spring MVC view resolver -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- Activates various annotations to be detected in bean classes e.g: @Autowired -->
+    <context:annotation-config/>
+
+    <context:property-placeholder location="classpath:db.properties" system-properties-mode="OVERRIDE"/>
+
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.username}"/>
+        <property name="password" value="${database.password}"/>
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:packagesToScan="mvc.model"
+          p:dataSource-ref="dataSource">
+
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="true"/>
+                <property name="showSql" value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+          p:entityManagerFactory-ref="entityManagerFactory"/>
+
+</beans>
+
+
+
+
+
