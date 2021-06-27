@@ -1,4 +1,4 @@
-# Blinkist book of the day scrapper
+# Blinkist book of the day scraper
 
 A java web application that downloads a book of the day from Blinkist and stores it in the internal DB (MySQL or any other per your choice), so you can access it later.
 
