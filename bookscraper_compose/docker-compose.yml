@@ -1,0 +1,28 @@
+version: "2"
+
+services:
+
+ cloudscraper:
+  build: cloudscraper/
+  ports:
+   - 8000:8000
+  network_mode: host
+  container_name: bookscraper_cloudscraper
+
+ mysql:
+  build: mysql/
+  ports:
+   - 3306:3306
+  network_mode: host
+  volumes:
+   - /home/docker/mysql:/var/lib/mysql
+  container_name: bookscraper_mysql
+
+ tomcat:
+  build: tomcat/
+  ports:
+   - 8888:8080
+  network_mode: host
+  volumes:
+   - /home/docker/bookstorage:/media/files
+  container_name: bookscraper_tomcat
