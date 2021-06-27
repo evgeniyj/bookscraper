@@ -10,7 +10,12 @@
 <body>
 
 <br><br>
-<div class="books_main"><h1>Library</h1></div>
+<div class="books_main">
+    <h1>Library</h1>
+    <a href="getTodayBook"><c:out default="" escapeXml="false"
+                                  value="${isReceivedTodayBook ? '' : '(get_Today_Book)'}"/></a>
+</div>
+
 
 <br><br>
 

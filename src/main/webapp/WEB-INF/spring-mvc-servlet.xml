@@ -16,9 +16,8 @@
     <mvc:default-servlet-handler/>
 
     <!--  all resources inside folder src/main/webapp/resources are mapped so they can be referred to inside JSP files -->
-    <!--<mvc:resources mapping="/audio/**" location="file:d://BaiduYun/test/"/>-->
 
-    <mvc:resources mapping="/resources/**" location="/resources/, file:/media/files/"
+    <mvc:resources mapping="/resources/**" location="/resources/, ${media.folder}"
                    cache-period="31556926"/>
 
     <!-- Add support for component scanning -->

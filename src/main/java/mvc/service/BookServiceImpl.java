@@ -4,6 +4,7 @@ import mvc.model.Book;
 import mvc.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -16,6 +17,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Book save(Book book) {
         return repository.save(book);
     }
@@ -33,6 +35,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public String getNativeIdByTitle(String title) {
         return repository.getNativeIdByTitle(title);
+    }
+
+    @Override
+    public boolean isInStorage(String nativeId) {
+        return repository.isInStorage(nativeId);
     }
 
     @Override

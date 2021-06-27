@@ -14,6 +14,8 @@ public interface BookRepository {
 
     String getNativeIdByTitle(String title);
 
+    boolean isInStorage(String nativeId);
+
     List<Book> getAll();
 
 }

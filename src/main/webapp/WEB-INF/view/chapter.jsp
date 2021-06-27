@@ -30,15 +30,21 @@
 
 <div class="reader_container_buttons">
     <div class="reader_container_navigation_control">
-        <div class="reader_container_navigation_control_prev_button" <c:out default="" escapeXml="false"
-                                                                            value="${previous.length() eq 0 ? hidden : \"\"}"/>>
-            <a class="reader_prev-icon" data-no-turbolink="true"
+        <div class="reader_container_navigation_control_prev_button">
+            <a class="reader_prev-icon" data-no-turbolink="true" <c:out default="" escapeXml="false"
+                                                                        value="${previous.length() eq 0 ? hidden : \"\"}"/>
                href="${previous.equals("") ? "" : chapter.orderNo}">${previous}</a>
 
         </div>
-        <div class="reader_container_navigation_control_next_button" <c:out default="" escapeXml="false"
-                                                                            value="${next.length() eq 0 ? hidden : \"\"}"/>>
-            <a class="reader_next-icon" data-no-turbolink="true"
+
+
+        <a class="reader_all_books" data-no-turbolink="true" href="${pageContext.request.contextPath}/">List of the
+            books</a>
+
+
+        <div class="reader_container_navigation_control_next_button">
+            <a class="reader_next-icon" data-no-turbolink="true" <c:out default="" escapeXml="false"
+                                                                        value="${next.length() eq 0 ? hidden : \"\"}"/>
                href="${next.equals("") ? "" : chapter.orderNo + 2}">${next}</a>
 
         </div>

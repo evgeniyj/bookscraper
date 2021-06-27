@@ -14,6 +14,8 @@ public interface BookService {
 
     String getNativeIdByTitle(String title);
 
+    boolean isInStorage(String nativeId);
+
     List<Book> getAll();
 
 }

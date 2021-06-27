@@ -24,31 +24,49 @@ public class BookController {
 
     private final BookService bookService;
 
+    private boolean isReceivedTodayBook;
+
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
     @Scheduled(cron = "0 10 9 * * ?")
-    public void getTodayBook() throws IOException {
+    public void getTodayBook() {
+
+        isReceivedTodayBook = false;
+
         String content = getContent();
 
         Document todayBook = Jsoup.parse(content);
 
         String bookId = getBookId(todayBook);
 
-        JSONObject todayBookInJSON = getTodayBookInJSON(bookId);
+        try {
 
-        Book book = getBookFromJSON(todayBookInJSON, bookId);
+            if (!bookService.isInStorage(bookId)) {
 
-        JSONArray jsonChapters = todayBookInJSON.getJSONArray("chapters");
+                JSONObject todayBookInJSON = getTodayBookInJSON(bookId);
 
-        System.out.println(todayBookInJSON);
+                Book book = getBookFromJSON(todayBookInJSON, bookId);
 
-        populateChaptersFromJSON(book, jsonChapters);
+                JSONArray jsonChapters = todayBookInJSON.getJSONArray("chapters");
 
-        getAudioAndCover(book);
+                System.out.println(todayBookInJSON);
 
-        bookService.save(book);
+                populateChaptersFromJSON(book, jsonChapters);
+
+                getAudioAndCover(book);
+
+                bookService.save(book);
+
+                isReceivedTodayBook = true;
+            } else
+                isReceivedTodayBook = true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @RequestMapping("/")
@@ -59,6 +77,7 @@ public class BookController {
 
         ModelAndView mav = new ModelAndView("books");
         mav.addObject("bookList", bookList);
+        mav.addObject("isReceivedTodayBook", isReceivedTodayBook);
         return mav;
     }
 
@@ -75,6 +94,15 @@ public class BookController {
         mav.addObject("book", book);
 
         return mav;
+
+    }
+
+    @RequestMapping("/getTodayBook")
+    public ModelAndView getTodayBookManually() {
+
+        getTodayBook();
+
+        return showBooks();
 
     }
 }

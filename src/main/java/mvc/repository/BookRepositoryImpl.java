@@ -5,19 +5,16 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.List;
 
 
 @Repository
-@Transactional
 public class BookRepositoryImpl implements BookRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    @Transactional
     public Book save(Book book) {
         entityManager.persist(book);
         return book;
@@ -42,6 +39,15 @@ public class BookRepositoryImpl implements BookRepository {
                 .setParameter("title", title)
                 .getResultList()
                 .get(0);
+    }
+
+    @Override
+    public boolean isInStorage(String nativeId) {
+        List<Book> resultList = entityManager.createQuery("from Book where nativeId = :nativeId", Book.class)
+                .setParameter("nativeId", nativeId)
+                .getResultList();
+
+        return resultList.size() > 0;
     }
 
     @Override
