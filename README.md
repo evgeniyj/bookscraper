@@ -23,6 +23,7 @@ All the modules executes in separate docker containers.
 3. Copy "bookscraper-1.0-SNAPSHOT.war" to "bookscraper_compose/tomcat"
 4. cd to "bookscraper_compose" and run "docker-compose up -d --build"
 5. Run "docker exec -it bookscraper_mysql bash" and execute ' mysql -h 127.0.0.1 -u root -p"12345" '
+   
    This fixes a bug that prevents the application from connecting to the DB (Access to DialectResolutionInfo cannot be null when 'hibernate.dialect' not set" exception)  
 6. Open http://your_host:8080/bookscraper-1.0-SNAPSHOT/ (Usually, the application within 2 minutes)
 
